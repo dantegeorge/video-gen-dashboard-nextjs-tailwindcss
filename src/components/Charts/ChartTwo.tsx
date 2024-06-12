@@ -14,7 +14,6 @@ const ChartTwo: React.FC = () => {
       </div>
 
       <form action="#">
-        {" "}
         <div className="mb-5.5">
           <div className="relative">
             <span className="absolute left-4.5 top-4">

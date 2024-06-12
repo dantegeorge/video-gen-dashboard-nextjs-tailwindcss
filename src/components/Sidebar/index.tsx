@@ -153,7 +153,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             fill=""
                           />
                         </svg>
-                        AI Music Video Generator
+                        AI Music Video Creator
                       </Link>
                     </React.Fragment>
                   );
