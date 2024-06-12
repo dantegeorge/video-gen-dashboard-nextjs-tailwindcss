@@ -1,4 +1,4 @@
-import WebCam from "@/components/WebCam";
+import ViewVideoBoothVid from "@/components/ViewVideoBoothVid";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 
 const CalendarPage = () => {
   return (
-   
-      <WebCam />
-   
+    <DefaultLayout>
+      <ViewVideoBoothVid />
+    </DefaultLayout>
   );
 };
 
