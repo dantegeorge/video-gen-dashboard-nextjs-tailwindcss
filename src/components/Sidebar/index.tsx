@@ -127,12 +127,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             pathname.includes("dashboard")) &&
                           "bg-graydark dark:bg-meta-4"
                         }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded
-                            ? handleClick()
-                            : setSidebarExpanded(true);
-                        }}
                       >
                         <svg
                           className="fill-current"
@@ -159,7 +153,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             fill=""
                           />
                         </svg>
-                        Dashboard
+                        AI Music Video Generator
                       </Link>
                     </React.Fragment>
                   );
@@ -209,7 +203,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </Link>
               </li>
               {/* <!-- Menu Item Settings --> */}
-              {/* <!-- Menu Item Settings --> */}
+              {/* <!-- Menu Item Video Booth --> */}
               <li>
                 <Link
                   href="/calendar"
@@ -247,10 +241,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       </clipPath>
                     </defs>
                   </svg>
-                  Calendar
+                  Video Booth
                 </Link>
               </li>
-              {/* <!-- Menu Item Settings --> */}
+              {/* <!-- Menu Item Video Booth --> */}
             </ul>
           </div>
         </nav>
