@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 
 const ChartOne: React.FC = () => {
   const [fileError, setFileError] = useState<string | null>(null);
@@ -245,6 +246,20 @@ const ChartOne: React.FC = () => {
             >
               Generate
             </button>
+          </div>
+        </div>
+        <div className="col-span-12 h-full rounded-sm border border-stroke bg-white px-7.5 py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-12">
+          <h4 className="mb-2 text-xl font-semibold text-black dark:text-white">
+            Preview Video:
+          </h4>
+          <div className="flex justify-center">
+            <Image
+              width={400}
+              height={400}
+              src={"/images/illustration/illustration-placeholder.svg"}
+              alt="placeholder"
+              priority
+            />
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import ChartOne from "../Charts/ChartOne";
 import ChartTwo from "../Charts/ChartTwo";
 import CardDataStats from "../CardDataStats";
@@ -8,8 +9,9 @@ import MapOne from "../Maps/MapOne";
 const ECommerce: React.FC = () => {
   return (
     <>
+      <Breadcrumb pageName="AI Music Video Creator" />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-1 2xl:gap-7.5">
-        <CardDataStats title="Total views" total="$3.456K" rate="0.43%" levelUp>
+        {/* <CardDataStats title="Total views" total="$3.456K" rate="0.43%" levelUp>
           <svg
             className="fill-primary dark:fill-white"
             width="22"
@@ -27,7 +29,7 @@ const ECommerce: React.FC = () => {
               fill=""
             />
           </svg>
-        </CardDataStats>
+        </CardDataStats> */}
       </div>
 
       <div>
