@@ -124,7 +124,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         href="/"
                         className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                           (pathname === "/" ||
-                            pathname.includes("dashboard")) &&
+                            pathname.includes("ai-music-canvas")) &&
                           "bg-graydark dark:bg-meta-4"
                         }`}
                       >
@@ -136,7 +136,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           alt="Camera"
                           priority
                         />
-                        AI Music Video Creator
+                        AI Canvas Generator
                       </Link>
                     </React.Fragment>
                   );
@@ -149,7 +149,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <Link
                   href="/videobooth"
                   className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes("videobooth") &&
+                    pathname.includes("ai-video-recorder") &&
                     "bg-graydark dark:bg-meta-4"
                   }`}
                 >
@@ -161,7 +161,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     alt="Camera"
                     priority
                   />
-                  Video Booth
+                  AI Video Recorder
                 </Link>
               </li>
               {/* <!-- Menu Item Video Booth --> */}

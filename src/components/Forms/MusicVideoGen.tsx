@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 const ChartOne: React.FC = () => {
@@ -7,35 +7,66 @@ const ChartOne: React.FC = () => {
   const [prompt, setPrompt] = useState<string>("");
   const [workflow, setWorkflow] = useState<string>("");
 
+  useEffect(() => {
+    // Clear the uploaded files and file error when workflow changes
+    setUploadedFiles([]);
+    setFileError(null);
+  }, [workflow]);
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
-      if (files.length !== 4) {
-        setFileError("Please upload exactly 4 images.");
-        return;
-      }
-
-      const validTypes = ["image/jpeg", "image/png"];
-      for (let i = 0; i < files.length; i++) {
-        if (!validTypes.includes(files[i].type)) {
-          setFileError("Only JPG and PNG files are allowed.");
+      if (workflow === "workflow2") {
+        if (files.length !== 1) {
+          setFileError("Please upload exactly 1 video.");
           return;
         }
-      }
 
-      // Clear the error if validation passes
-      setFileError(null);
-      // Store the files in the state
-      setUploadedFiles(Array.from(files));
+        const validTypes = ["video/mp4", "video/webm"];
+        if (!validTypes.includes(files[0].type)) {
+          setFileError("Only MP4 and WEBM files are allowed.");
+          return;
+        }
+
+        // Clear the error if validation passes
+        setFileError(null);
+        // Store the file in the state
+        setUploadedFiles(Array.from(files));
+      } else {
+        if (files.length !== 4) {
+          setFileError("Please upload exactly 4 images.");
+          return;
+        }
+
+        const validTypes = ["image/jpeg", "image/png"];
+        for (let i = 0; i < files.length; i++) {
+          if (!validTypes.includes(files[i].type)) {
+            setFileError("Only JPG and PNG files are allowed.");
+            return;
+          }
+        }
+
+        // Clear the error if validation passes
+        setFileError(null);
+        // Store the files in the state
+        setUploadedFiles(Array.from(files));
+      }
     }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (uploadedFiles.length !== 4) {
-      setFileError("Please upload exactly 4 images.");
-      return;
+    if (workflow === "workflow2") {
+      if (uploadedFiles.length !== 1) {
+        setFileError("Please upload exactly 1 video.");
+        return;
+      }
+    } else {
+      if (uploadedFiles.length !== 4) {
+        setFileError("Please upload exactly 4 images.");
+        return;
+      }
     }
 
     const formData = new FormData();
@@ -72,7 +103,9 @@ const ChartOne: React.FC = () => {
                 <div className="w-full">
                   <div>
                     <h4 className="text-xl font-semibold text-black dark:text-white">
-                      Upload Images:
+                      {workflow === "workflow2"
+                        ? "Upload Video:"
+                        : "Upload Images:"}
                     </h4>
                   </div>
                 </div>
@@ -87,9 +120,13 @@ const ChartOne: React.FC = () => {
             >
               <input
                 type="file"
-                accept=".jpg,.jpeg,.png"
+                accept={
+                  workflow === "workflow2"
+                    ? "video/mp4,video/webm"
+                    : ".jpg,.jpeg,.png"
+                }
                 className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
-                multiple
+                multiple={workflow !== "workflow2"}
                 onChange={handleFileChange}
               />
               <div className="flex flex-col items-center justify-center space-y-3">
@@ -125,7 +162,11 @@ const ChartOne: React.FC = () => {
                   <span className="text-primary">Click to upload</span> or drag
                   and drop
                 </p>
-                <p className="mt-1.5">Only PNG and JPG files are allowed</p>
+                <p className="mt-1.5">
+                  {workflow === "workflow2"
+                    ? "Only MP4 and WEBM files are allowed"
+                    : "Only PNG and JPG files are allowed"}
+                </p>
                 {fileError && <p className="mt-2 text-red">{fileError}</p>}
               </div>
             </div>
@@ -139,11 +180,19 @@ const ChartOne: React.FC = () => {
                     <ul className="flex space-x-4">
                       {uploadedFiles.map((file, index) => (
                         <li key={index} className="flex flex-col items-center">
-                          <img
-                            src={URL.createObjectURL(file)}
-                            alt={`uploaded-${index}`}
-                            className="mb-1 h-32 w-32 object-cover"
-                          />
+                          {workflow === "workflow2" ? (
+                            <video
+                              src={URL.createObjectURL(file)}
+                              controls
+                              className="mb-1 h-32 w-32 object-cover"
+                            />
+                          ) : (
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={`uploaded-${index}`}
+                              className="mb-1 h-32 w-32 object-cover"
+                            />
+                          )}
                           <p>{file.name}</p>
                         </li>
                       ))}
@@ -222,9 +271,9 @@ const ChartOne: React.FC = () => {
               onChange={(e) => setWorkflow(e.target.value)}
             >
               <option value="">Select Workflow</option>
-              <option value="workflow1">Workflow 1</option>
-              <option value="workflow2">Workflow 2</option>
-              <option value="workflow3">Workflow 3</option>
+              <option value="workflow1">Canvas Generator</option>
+              <option value="workflow2">Video Upload</option>
+              <option value="workflow3">Video Record</option>
             </select>
           </div>
           <div className="mt-4 flex justify-end gap-4.5">
