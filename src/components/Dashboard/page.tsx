@@ -1,12 +1,9 @@
 "use client";
 import React from "react";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import ChartOne from "../Charts/ChartOne";
-import ChartTwo from "../Charts/ChartTwo";
-import CardDataStats from "../CardDataStats";
-import MapOne from "../Maps/MapOne";
+import MusicVideoGen from "../Forms/MusicVideoGen";
 
-const ECommerce: React.FC = () => {
+const MainPage: React.FC = () => {
   return (
     <>
       <Breadcrumb pageName="AI Music Video Creator" />
@@ -33,10 +30,10 @@ const ECommerce: React.FC = () => {
       </div>
 
       <div>
-        <ChartOne />
+        <MusicVideoGen />
       </div>
     </>
   );
 };
 
-export default ECommerce;
+export default MainPage;
