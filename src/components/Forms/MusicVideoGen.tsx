@@ -1,11 +1,71 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-
+import axios from "axios";
 const ChartOne: React.FC = () => {
   const [fileError, setFileError] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [prompt, setPrompt] = useState<string>("");
   const [workflow, setWorkflow] = useState<string>("");
+
+  // WebSocket state
+  const [ws, setWs] = useState<WebSocket | null>(null);
+  const [progress, setProgress] = useState<number>(0);
+  const [status, setStatus] = useState<string>("");
+
+  // Function to initialize WebSocket connection
+  const connectWebSocket = (clientId: string) => {
+    const wsUrl = `ws://localhost:8188/ws?clientId=${clientId}`;
+    const websocket = new WebSocket(wsUrl);
+
+    websocket.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    websocket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      const {
+        type,
+        data: { value: current, max, prompt_id },
+      } = message;
+
+      if (type === "progress") {
+        if (max > 1) {
+          console.log(`Progress: ${current} out of ${max}`);
+          setProgress((current * 100) / max); // Calculate progress percentage
+
+          if (current === max) {
+            console.log("Prompt is completed");
+            setStatus("dequeued");
+          }
+        } else {
+          console.log("Preparing models and nodes");
+          setProgress(10);
+        }
+      } else if (type === "executing") {
+        console.log("Prompt was executed");
+        setStatus("executed");
+      }
+    };
+
+    websocket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    websocket.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    setWs(websocket);
+  };
+
+  useEffect(() => {
+    // Cleanup function to close WebSocket connection
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+    };
+  }, [ws]);
 
   useEffect(() => {
     // Clear the uploaded files and file error when workflow changes
@@ -57,39 +117,39 @@ const ChartOne: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (workflow === "workflow2") {
-      if (uploadedFiles.length !== 1) {
-        setFileError("Please upload exactly 1 video.");
-        return;
-      }
-    } else {
-      if (uploadedFiles.length !== 4) {
-        setFileError("Please upload exactly 4 images.");
-        return;
-      }
+    // Validate uploaded files
+    if (uploadedFiles.length !== 4) {
+      setFileError("Please upload exactly 4 images.");
+      return;
     }
 
     const formData = new FormData();
-    uploadedFiles.forEach((file) => {
-      formData.append("files", file);
+    uploadedFiles.forEach((file, index) => {
+      formData.append(`filenames${index + 1}`, file);
     });
     formData.append("prompt", prompt);
-    formData.append("workflow", workflow);
+
+    console.log("Form data:", formData);
 
     try {
-      const response = await fetch("/your-backend-endpoint", {
-        method: "POST",
-        body: formData,
+      console.log("trying post");
+      const endpoint = "http://localhost:8888/api/post-img2vid";
+      const response = await axios.post(endpoint, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-
-      if (!response.ok) {
+      console.log("response", response);
+      if (!response.data) {
         throw new Error("Failed to submit data");
       }
 
-      const result = await response.json();
-      console.log("Success:", result);
+      console.log("Success:", response.data);
+
+      // Handle success (e.g., show success message)
     } catch (error) {
       console.error("Error:", error);
+      // Handle error (e.g., show error message)
     }
   };
 
