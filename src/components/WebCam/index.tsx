@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 
 const domain = "http://localhost:8188";
-import workflow from "../../../workflow_api2.json";
+import workflow from "../../../Videoboothtest.json";
 import { stringify } from "querystring";
 function WebcamStream() {
   const webcamRef = useRef<Webcam>(null);
@@ -185,7 +185,8 @@ function WebcamStream() {
       >
         {isRecording ? "Recording..." : "Start Recording"}
       </button>
-      <button  style={{
+      <button
+        style={{
           position: "absolute",
           bottom: "20px",
           left: "10%",
@@ -198,8 +199,9 @@ function WebcamStream() {
           cursor: "pointer",
         }}
         onClick={() => router.push("/")}
-        
-      >Back</button>
+      >
+        Back
+      </button>
     </div>
   );
 }

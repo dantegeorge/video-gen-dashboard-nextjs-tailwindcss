@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     "This is Next.js Calender page for TailAdmin  Tailwind CSS Admin Dashboard Template",
 };
 
-const CalendarPage = () => {
+const CalendarPage1 = () => {
   return (
     <DefaultLayout>
       <ViewVideoBoothVid />
@@ -16,4 +16,4 @@ const CalendarPage = () => {
   );
 };
 
-export default CalendarPage;
+export default CalendarPage1;

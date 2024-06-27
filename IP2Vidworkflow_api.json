@@ -1,0 +1,665 @@
+{
+  "1": {
+    "inputs": {
+      "seed": 5,
+      "steps": 29,
+      "cfg": 6.3,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 0.8200000000000001,
+      "model": ["86", 0],
+      "positive": ["4", 0],
+      "negative": ["5", 0],
+      "latent_image": ["3", 0]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "2": {
+    "inputs": {
+      "ckpt_name": "difconsistencyCheckpoint_v10.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "3": {
+    "inputs": {
+      "width": 1024,
+      "height": 576,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent Image"
+    }
+  },
+  "4": {
+    "inputs": {
+      "text": "",
+      "clip": ["2", 1]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "5": {
+    "inputs": {
+      "text": "cartoon, painting, illustration, (worst quality, low quality, normal quality:2)",
+      "clip": ["2", 1]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "6": {
+    "inputs": {
+      "samples": ["1", 0],
+      "vae": ["7", 0]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "7": {
+    "inputs": {
+      "vae_name": "vae-ft-mse-840000-ema-pruned.ckpt"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "8": {
+    "inputs": {
+      "images": ["6", 0]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
+  "10": {
+    "inputs": {
+      "ipadapter_file": "ip-adapter-plus_sd15.safetensors"
+    },
+    "class_type": "IPAdapterModelLoader",
+    "_meta": {
+      "title": "IPAdapter Model Loader"
+    }
+  },
+  "11": {
+    "inputs": {
+      "clip_name": "CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "Load CLIP Vision"
+    }
+  },
+  "12": {
+    "inputs": {
+      "image": "",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "13": {
+    "inputs": {
+      "interpolation": "LANCZOS",
+      "crop_position": "center",
+      "sharpening": 0,
+      "image": ["12", 0]
+    },
+    "class_type": "PrepImageForClipVision",
+    "_meta": {
+      "title": "Prep Image For ClipVision"
+    }
+  },
+  "27": {
+    "inputs": {
+      "image": "",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "32": {
+    "inputs": {
+      "value": 1,
+      "width": 441,
+      "height": 564
+    },
+    "class_type": "SolidMask",
+    "_meta": {
+      "title": "SolidMask"
+    }
+  },
+  "33": {
+    "inputs": {
+      "x": 0,
+      "y": 0,
+      "operation": "add",
+      "destination": ["34", 0],
+      "source": ["47", 0]
+    },
+    "class_type": "MaskComposite",
+    "_meta": {
+      "title": "MaskComposite"
+    }
+  },
+  "34": {
+    "inputs": {
+      "value": 0,
+      "width": 1512,
+      "height": 576
+    },
+    "class_type": "SolidMask",
+    "_meta": {
+      "title": "SolidMask"
+    }
+  },
+  "37": {
+    "inputs": {
+      "value": 1,
+      "width": 484,
+      "height": 570
+    },
+    "class_type": "SolidMask",
+    "_meta": {
+      "title": "SolidMask"
+    }
+  },
+  "38": {
+    "inputs": {
+      "x": 352,
+      "y": 0,
+      "operation": "add",
+      "destination": ["34", 0],
+      "source": ["48", 0]
+    },
+    "class_type": "MaskComposite",
+    "_meta": {
+      "title": "MaskComposite"
+    }
+  },
+  "47": {
+    "inputs": {
+      "left": 0,
+      "top": 0,
+      "right": 171,
+      "bottom": 0,
+      "mask": ["32", 0]
+    },
+    "class_type": "FeatherMask",
+    "_meta": {
+      "title": "FeatherMask"
+    }
+  },
+  "48": {
+    "inputs": {
+      "left": 121,
+      "top": 0,
+      "right": 121,
+      "bottom": 0,
+      "mask": ["37", 0]
+    },
+    "class_type": "FeatherMask",
+    "_meta": {
+      "title": "FeatherMask"
+    }
+  },
+  "52": {
+    "inputs": {
+      "interpolation": "NEAREST",
+      "crop_position": "bottom",
+      "sharpening": 0,
+      "image": ["27", 0]
+    },
+    "class_type": "PrepImageForClipVision",
+    "_meta": {
+      "title": "Prep Image For ClipVision"
+    }
+  },
+  "58": {
+    "inputs": {
+      "image": "",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "59": {
+    "inputs": {
+      "value": 1,
+      "width": 454,
+      "height": 567
+    },
+    "class_type": "SolidMask",
+    "_meta": {
+      "title": "SolidMask"
+    }
+  },
+  "60": {
+    "inputs": {
+      "x": 800,
+      "y": 0,
+      "operation": "add",
+      "destination": ["34", 0],
+      "source": ["61", 0]
+    },
+    "class_type": "MaskComposite",
+    "_meta": {
+      "title": "MaskComposite"
+    }
+  },
+  "61": {
+    "inputs": {
+      "left": 114,
+      "top": 0,
+      "right": 104,
+      "bottom": 0,
+      "mask": ["59", 0]
+    },
+    "class_type": "FeatherMask",
+    "_meta": {
+      "title": "FeatherMask"
+    }
+  },
+  "63": {
+    "inputs": {
+      "interpolation": "NEAREST",
+      "crop_position": "center",
+      "sharpening": 0,
+      "image": ["58", 0]
+    },
+    "class_type": "PrepImageForClipVision",
+    "_meta": {
+      "title": "Prep Image For ClipVision"
+    }
+  },
+  "64": {
+    "inputs": {
+      "mask": ["38", 0]
+    },
+    "class_type": "MaskPreview+",
+    "_meta": {
+      "title": "🔧 Mask Preview"
+    }
+  },
+  "65": {
+    "inputs": {
+      "mask": ["33", 0]
+    },
+    "class_type": "MaskPreview+",
+    "_meta": {
+      "title": "🔧 Mask Preview"
+    }
+  },
+  "66": {
+    "inputs": {
+      "mask": ["60", 0]
+    },
+    "class_type": "MaskPreview+",
+    "_meta": {
+      "title": "🔧 Mask Preview"
+    }
+  },
+  "67": {
+    "inputs": {
+      "image": "",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "68": {
+    "inputs": {
+      "value": 1,
+      "width": 440,
+      "height": 564
+    },
+    "class_type": "SolidMask",
+    "_meta": {
+      "title": "SolidMask"
+    }
+  },
+  "69": {
+    "inputs": {
+      "x": 1051,
+      "y": 0,
+      "operation": "add",
+      "destination": ["34", 0],
+      "source": ["70", 0]
+    },
+    "class_type": "MaskComposite",
+    "_meta": {
+      "title": "MaskComposite"
+    }
+  },
+  "70": {
+    "inputs": {
+      "left": 116,
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "mask": ["68", 0]
+    },
+    "class_type": "FeatherMask",
+    "_meta": {
+      "title": "FeatherMask"
+    }
+  },
+  "72": {
+    "inputs": {
+      "interpolation": "NEAREST",
+      "crop_position": "center",
+      "sharpening": 0,
+      "image": ["67", 0]
+    },
+    "class_type": "PrepImageForClipVision",
+    "_meta": {
+      "title": "Prep Image For ClipVision"
+    }
+  },
+  "73": {
+    "inputs": {
+      "mask": ["69", 0]
+    },
+    "class_type": "MaskPreview+",
+    "_meta": {
+      "title": "🔧 Mask Preview"
+    }
+  },
+  "86": {
+    "inputs": {
+      "weight": 1,
+      "weight_type": "linear",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 1,
+      "embeds_scaling": "V only",
+      "model": ["87", 0],
+      "ipadapter": ["10", 0],
+      "image": ["72", 0],
+      "attn_mask": ["69", 0],
+      "clip_vision": ["11", 0]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "IPAdapter Advanced"
+    }
+  },
+  "87": {
+    "inputs": {
+      "weight": 1,
+      "weight_type": "linear",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 1,
+      "embeds_scaling": "V only",
+      "model": ["89", 0],
+      "ipadapter": ["10", 0],
+      "image": ["63", 0],
+      "attn_mask": ["60", 0],
+      "clip_vision": ["11", 0]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "IPAdapter Advanced"
+    }
+  },
+  "88": {
+    "inputs": {
+      "weight": 1,
+      "weight_type": "linear",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 1,
+      "embeds_scaling": "V only",
+      "model": ["2", 0],
+      "ipadapter": ["10", 0],
+      "image": ["13", 0],
+      "attn_mask": ["33", 0],
+      "clip_vision": ["11", 0]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "IPAdapter Advanced"
+    }
+  },
+  "89": {
+    "inputs": {
+      "weight": 1,
+      "weight_type": "linear",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 1,
+      "embeds_scaling": "V only",
+      "model": ["88", 0],
+      "ipadapter": ["10", 0],
+      "image": ["52", 0],
+      "attn_mask": ["38", 0],
+      "clip_vision": ["11", 0]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "IPAdapter Advanced"
+    }
+  },
+  "90": {
+    "inputs": {
+      "width": 1024,
+      "height": 576,
+      "video_frames": 24,
+      "motion_bucket_id": 40,
+      "fps": 25,
+      "augmentation_level": 0.04,
+      "clip_vision": ["94", 1],
+      "init_image": ["6", 0],
+      "vae": ["94", 2]
+    },
+    "class_type": "SVD_img2vid_Conditioning",
+    "_meta": {
+      "title": "SVD_img2vid_Conditioning"
+    }
+  },
+  "91": {
+    "inputs": {
+      "seed": ["95", 0],
+      "steps": 20,
+      "cfg": 2,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 1,
+      "model": ["97", 0],
+      "positive": ["90", 0],
+      "negative": ["90", 1],
+      "latent_image": ["90", 2]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "94": {
+    "inputs": {
+      "ckpt_name": "svd.safetensors"
+    },
+    "class_type": "ImageOnlyCheckpointLoader",
+    "_meta": {
+      "title": "Image Only Checkpoint Loader (img2vid model)"
+    }
+  },
+  "95": {
+    "inputs": {
+      "seed": 423545146057977
+    },
+    "class_type": "Seed (rgthree)",
+    "_meta": {
+      "title": "Seed (rgthree)"
+    }
+  },
+  "96": {
+    "inputs": {
+      "min_cfg": 3,
+      "model": ["94", 0]
+    },
+    "class_type": "VideoLinearCFGGuidance",
+    "_meta": {
+      "title": "VideoLinearCFGGuidance"
+    }
+  },
+  "97": {
+    "inputs": {
+      "b1": 1.3,
+      "b2": 1.4,
+      "s1": 0.9,
+      "s2": 0.2,
+      "model": ["96", 0]
+    },
+    "class_type": "FreeU_V2",
+    "_meta": {
+      "title": "FreeU_V2"
+    }
+  },
+  "98": {
+    "inputs": {
+      "frame_rate": 30,
+      "loop_count": 0,
+      "filename_prefix": "SVD-1st-",
+      "format": "video/webm",
+      "crf": 20,
+      "save_metadata": true,
+      "pingpong": false,
+      "save_output": true,
+      "images": ["109", 0]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "101": {
+    "inputs": {
+      "model_name": "RealESRGAN_x2.pth"
+    },
+    "class_type": "UpscaleModelLoader",
+    "_meta": {
+      "title": "Load Upscale Model"
+    }
+  },
+  "102": {
+    "inputs": {
+      "upscale_model": ["101", 0],
+      "image": ["109", 0]
+    },
+    "class_type": "ImageUpscaleWithModel",
+    "_meta": {
+      "title": "AI Upscale"
+    }
+  },
+  "103": {
+    "inputs": {
+      "upscale_method": "nearest-exact",
+      "scale_by": 0.35000000000000003,
+      "image": ["102", 0]
+    },
+    "class_type": "ImageScaleBy",
+    "_meta": {
+      "title": "Downscale Image"
+    }
+  },
+  "104": {
+    "inputs": {
+      "pixels": ["103", 0],
+      "vae": ["94", 2]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "105": {
+    "inputs": {
+      "samples": ["107", 0],
+      "vae": ["94", 2]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "106": {
+    "inputs": {
+      "ckpt_name": "film_net_fp32.pt",
+      "clear_cache_after_n_frames": 10,
+      "multiplier": 2,
+      "frames": ["105", 0]
+    },
+    "class_type": "FILM VFI",
+    "_meta": {
+      "title": "FILM VFI"
+    }
+  },
+  "107": {
+    "inputs": {
+      "seed": ["95", 0],
+      "steps": 20,
+      "cfg": 7.4,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "simple",
+      "denoise": 0.25,
+      "model": ["97", 0],
+      "positive": ["90", 0],
+      "negative": ["90", 1],
+      "latent_image": ["91", 0]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "Hires.fix"
+    }
+  },
+  "108": {
+    "inputs": {
+      "frame_rate": 30,
+      "loop_count": 0,
+      "filename_prefix": "Final-SVD-",
+      "format": "video/webm",
+      "crf": 20,
+      "save_metadata": true,
+      "pingpong": false,
+      "save_output": true,
+      "images": ["106", 0]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "109": {
+    "inputs": {
+      "samples": ["91", 0],
+      "vae": ["94", 2]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  }
+}
