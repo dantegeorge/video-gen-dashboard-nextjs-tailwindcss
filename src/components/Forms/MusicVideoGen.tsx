@@ -2,35 +2,12 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import axios from "axios";
 import IP2Vidworkflow_api from "../../../IP2Vidworkflow_api.json";
-export async function connectToComfyUI(clientId: string): Promise<WebSocket> {
-  return new Promise<WebSocket>((resolve, reject) => {
-    const ws = new WebSocket(`ws://localhost:8188/ws?clientId=${clientId}`);
-
-
-const FormOne = () => {
-
-    ws.onopen = () => {
-      console.log("WebSocket connection established");
-      resolve(ws);
-    };
-
-    ws.onerror = (error) => {
-      console.error("WebSocket connection error:", error);
-      reject(error);
-    };
-
-    ws.onclose = () => {
-      console.log("WebSocket connection closed");
-    };
-  });
-}
 
 const ChartOne: React.FC = () => {
-
   const [fileError, setFileError] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [prompt, setPrompt] = useState<string>("");
-  const [workflow, setWorkflow] = useState<string>("");
+  const [workflow, setWorkflow] = useState<string>("workflow1");
 
   // WebSocket state
   const [ws, setWs] = useState<WebSocket | null>(null);
@@ -39,6 +16,57 @@ const ChartOne: React.FC = () => {
 
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+
+  // export async function connectToComfyUI(clientId: string): Promise<WebSocket> {
+  //   return new Promise<WebSocket>((resolve, reject) => {
+  //     const ws = new WebSocket(`ws://localhost:8188/ws?clientId=${clientId}`);
+
+  // const FormOne = () => {
+
+  //     ws.onopen = () => {
+  //       console.log("WebSocket connection established");
+  //       resolve(ws);
+  //     };
+
+  //     ws.onerror = (error) => {
+  //       console.error("WebSocket connection error:", error);
+  //       reject(error);
+  //     };
+
+  //     ws.onclose = () => {
+  //       console.log("WebSocket connection closed");
+  //     };
+  //   };
+  //   }
+
+  const connectToComfyUI = async (clientId: string): Promise<WebSocket> => {
+    return new Promise<WebSocket>((resolve, reject) => {
+      const ws = new WebSocket(`ws://localhost:8188/ws?clientId=${clientId}`);
+
+      ws.onopen = () => {
+        console.log("WebSocket connection established");
+        resolve(ws);
+      };
+
+      ws.onerror = (error) => {
+        console.error("WebSocket connection error:", error);
+        reject(error);
+      };
+
+      ws.onclose = () => {
+        console.log("WebSocket connection closed");
+      };
+    });
+  };
+
+  // Effect to close WebSocket connection on component unmount
+  useEffect(() => {
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+    };
+  }, [ws]);
 
   // Function to initialize WebSocket connection
   const connectWebSocket = (clientId: string) => {
@@ -450,7 +478,6 @@ const ChartOne: React.FC = () => {
               value={workflow}
               onChange={(e) => setWorkflow(e.target.value)}
             >
-              <option value="">Select Workflow</option>
               <option value="workflow1">Canvas Generator</option>
               <option value="workflow2">Video Upload</option>
               <option value="workflow3">Video Record</option>
@@ -503,4 +530,4 @@ const ChartOne: React.FC = () => {
   );
 };
 
-export default FormOne;
+export default ChartOne;
