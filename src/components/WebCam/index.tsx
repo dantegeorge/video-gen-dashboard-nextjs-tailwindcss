@@ -178,6 +178,7 @@ function WebcamStream() {
       </div>
     );
   };
+
   useEffect(() => {
     let countdownTimer: NodeJS.Timeout;
     let recordingTimer: NodeJS.Timeout;
