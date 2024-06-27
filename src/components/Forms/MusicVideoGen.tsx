@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
-const ChartOne: React.FC = () => {
+const FormOne: React.FC = () => {
   const [fileError, setFileError] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [prompt, setPrompt] = useState<string>("");
@@ -316,4 +316,4 @@ const ChartOne: React.FC = () => {
   );
 };
 
-export default ChartOne;
+export default FormOne;
