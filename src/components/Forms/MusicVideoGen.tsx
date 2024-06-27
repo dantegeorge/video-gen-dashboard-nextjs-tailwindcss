@@ -6,6 +6,9 @@ export async function connectToComfyUI(clientId: string): Promise<WebSocket> {
   return new Promise<WebSocket>((resolve, reject) => {
     const ws = new WebSocket(`ws://localhost:8188/ws?clientId=${clientId}`);
 
+
+const FormOne = () => {
+
     ws.onopen = () => {
       console.log("WebSocket connection established");
       resolve(ws);
@@ -21,7 +24,9 @@ export async function connectToComfyUI(clientId: string): Promise<WebSocket> {
     };
   });
 }
+
 const ChartOne: React.FC = () => {
+
   const [fileError, setFileError] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [prompt, setPrompt] = useState<string>("");
@@ -498,4 +503,4 @@ const ChartOne: React.FC = () => {
   );
 };
 
-export default ChartOne;
+export default FormOne;
