@@ -19,7 +19,7 @@ const PreviewPage = () => {
             // setHistoryData(response.data);
             const filename = history.outputs[109].gifs[0].filename;
             setUrl(
-              `http://localhost:8188/view?filename=${filename}&subfolder=Not%20Upscaled`
+              `http://localhost:8188/view?filename=${filename}&type=output`,
             );
           }
 
@@ -65,7 +65,7 @@ const PreviewPage = () => {
       ) : (
         <div>Loading...</div>
       )}
-
+      <br />
       <button onClick={handleClearAndRedirect}>New Video</button>
     </div>
   );

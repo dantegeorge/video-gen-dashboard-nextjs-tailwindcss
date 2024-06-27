@@ -7,6 +7,9 @@ import axios from "axios";
 
 const domain = "http://localhost:8188";
 
+import workflow from "../../../Videoboothtest.json";
+import { stringify } from "querystring";
+
 function WebcamStream() {
   const webcamRef = useRef<Webcam>(null);
   const [isRecording, setIsRecording] = useState(false);

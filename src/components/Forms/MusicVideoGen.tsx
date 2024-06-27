@@ -1,11 +1,99 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import axios from "axios";
+import IP2Vidworkflow_api from "../../../IP2Vidworkflow_api.json";
+export async function connectToComfyUI(clientId: string): Promise<WebSocket> {
+  return new Promise<WebSocket>((resolve, reject) => {
+    const ws = new WebSocket(`ws://localhost:8188/ws?clientId=${clientId}`);
 
-const FormOne: React.FC = () => {
+
+const FormOne = () => {
+
+    ws.onopen = () => {
+      console.log("WebSocket connection established");
+      resolve(ws);
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket connection error:", error);
+      reject(error);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+  });
+}
+
+const ChartOne: React.FC = () => {
+
   const [fileError, setFileError] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [prompt, setPrompt] = useState<string>("");
   const [workflow, setWorkflow] = useState<string>("");
+
+  // WebSocket state
+  const [ws, setWs] = useState<WebSocket | null>(null);
+  const [progress, setProgress] = useState<number>(0);
+  const [status, setStatus] = useState<string>("");
+
+  const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
+
+  // Function to initialize WebSocket connection
+  const connectWebSocket = (clientId: string) => {
+    const wsUrl = `ws://localhost:8188/ws?clientId=${clientId}`;
+    const websocket = new WebSocket(wsUrl);
+
+    websocket.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    websocket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      const {
+        type,
+        data: { value: current, max, prompt_id },
+      } = message;
+
+      if (type === "progress") {
+        if (max > 1) {
+          console.log(`Progress: ${current} out of ${max}`);
+          setProgress((current * 100) / max); // Calculate progress percentage
+
+          if (current === max) {
+            console.log("Prompt is completed");
+            setStatus("dequeued");
+          }
+        } else {
+          console.log("Preparing models and nodes");
+          setProgress(10);
+        }
+      } else if (type === "executing") {
+        console.log("Prompt was executed");
+        setStatus("executed");
+      }
+    };
+
+    websocket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    websocket.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    setWs(websocket);
+  };
+
+  useEffect(() => {
+    // Cleanup function to close WebSocket connection
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+    };
+  }, [ws]);
 
   useEffect(() => {
     // Clear the uploaded files and file error when workflow changes
@@ -53,45 +141,137 @@ const FormOne: React.FC = () => {
       }
     }
   };
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (workflow === "workflow2") {
-      if (uploadedFiles.length !== 1) {
-        setFileError("Please upload exactly 1 video.");
-        return;
-      }
-    } else {
-      if (uploadedFiles.length !== 4) {
-        setFileError("Please upload exactly 4 images.");
-        return;
-      }
+    // Validate uploaded files
+    if (workflow === "workflow1" && uploadedFiles.length !== 4) {
+      setFileError("Please upload exactly 4 images.");
+      return;
+    } else if (workflow === "workflow2" && uploadedFiles.length !== 1) {
+      setFileError("Please upload exactly 1 video.");
+      return;
     }
 
-    const formData = new FormData();
-    uploadedFiles.forEach((file) => {
-      formData.append("files", file);
-    });
-    formData.append("prompt", prompt);
-    formData.append("workflow", workflow);
+    setIsGenerating(true); // Set generating status to true
 
     try {
-      const response = await fetch("/your-backend-endpoint", {
-        method: "POST",
-        body: formData,
-      });
+      let copy;
 
-      if (!response.ok) {
-        throw new Error("Failed to submit data");
+      if (workflow === "workflow1") {
+        // Upload the files and get their filenames
+        const uploadedFilenames = await Promise.all(
+          uploadedFiles.map(async (file) => {
+            const formData = new FormData();
+            formData.append("image", file);
+            const response = await axios.post(
+              `http://localhost:8188/upload/image`,
+              formData,
+            );
+            return response.data.name; // Adjust this according to your backend response structure
+          }),
+        );
+
+        // Deep copy the workflow structure for workflow1
+        copy = JSON.parse(JSON.stringify(IP2Vidworkflow_api));
+        copy[12].inputs.image = `${uploadedFilenames[0]}`;
+        copy[27].inputs.image = `${uploadedFilenames[1]}`;
+        copy[58].inputs.image = `${uploadedFilenames[2]}`;
+        copy[67].inputs.image = `${uploadedFilenames[3]}`;
+        copy[4].inputs.text = prompt;
+
+        let seed = "";
+        for (let i = 0; i < 15; i++) {
+          seed += Math.floor(Math.random() * 10).toString();
+        }
+        copy[1].inputs.noise_seed = Number(seed);
+      } else if (workflow === "workflow2") {
+        // Deep copy the workflow structure for workflow2
+        copy = JSON.parse(JSON.stringify(workflow));
+        const { vidFileName, imgFileName } = await uploadVideoAndImage(); // Custom function to upload video and image
+
+        copy[107].inputs.video = `ComfyUI/input/${vidFileName}`;
+        copy[154].inputs.image = `${imgFileName}`;
+        copy[3].inputs.text = prompt;
+
+        let seed = "";
+        for (let i = 0; i < 15; i++) {
+          seed += Math.floor(Math.random() * 10).toString();
+        }
+        copy[111].inputs.noise_seed = Number(seed);
       }
 
-      const result = await response.json();
-      console.log("Success:", result);
+      // Send the modified workflow to the server
+      const { data } = await axios.post(`http://localhost:8188/prompt`, {
+        prompt: copy,
+      });
+
+      const clientId = data["prompt_id"];
+
+      // Connect to WebSocket server using the generated client ID
+      const ws = await connectToComfyUI(clientId);
+      console.log("WebSocket connection established with Diffusion model");
+
+      // Example: Handle incoming messages
+      ws.onmessage = async (event) => {
+        console.log("Received data from Diffusion model:", event.data);
+        // Once the generation is done, fetch the generated content URL
+        const result = await fetchGeneratedImg2VidContent(clientId);
+        setGeneratedUrl(result.url);
+        setIsGenerating(false); // Set generating status to false once done
+      };
+
+      // Send initialization message to the WebSocket server
+      ws.send(
+        JSON.stringify({ type: "init", message: "Hello, Diffusion model!" }),
+      );
+
+      // Optional: Return client ID or handle success
     } catch (error) {
       console.error("Error:", error);
+      setIsGenerating(false); // Ensure status is reset in case of error
     }
   };
+  async function uploadVideoAndImage() {
+    try {
+      // Implement video and image upload logic here
+      const vidFileName = ""; // Upload video and get filename
+      const imgFileName = ""; // Upload image and get filename
+
+      return { vidFileName, imgFileName };
+    } catch (error) {
+      console.error("Error uploading video and image:", error);
+      throw error;
+    }
+  }
+  async function fetchGeneratedImg2VidContent(prompt_id: string) {
+    try {
+      // Fetch history data using axios
+      const response = await axios.get(
+        `http://localhost:8188/history/${prompt_id}`,
+      );
+
+      // Extract the specific history data
+      const history = response.data[prompt_id];
+
+      if (history) {
+        // Extract the filename from the history data
+        const filename = history.outputs[108].gifs[0].filename;
+
+        // Construct the URL with the extracted filename
+        const url = `http://localhost:8188/view?filename=${filename}&type=output`;
+
+        return {
+          url,
+        };
+      } else {
+        throw new Error("History not found");
+      }
+    } catch (error) {
+      console.error("Error fetching history:", error);
+      throw error;
+    }
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -302,13 +482,20 @@ const FormOne: React.FC = () => {
             Preview Video:
           </h4>
           <div className="flex justify-center">
-            <Image
-              width={400}
-              height={400}
-              src={"/images/illustration/illustration-placeholder.svg"}
-              alt="placeholder"
-              priority
-            />
+            {generatedUrl ? (
+              <video width={512} height={512} controls loop>
+                <source src={generatedUrl} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <Image
+                width={400}
+                height={400}
+                src="/images/illustration/illustration-placeholder.svg"
+                alt="placeholder"
+                priority
+              />
+            )}
           </div>
         </div>
       </div>
