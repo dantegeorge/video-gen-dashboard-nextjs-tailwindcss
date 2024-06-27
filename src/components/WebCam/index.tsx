@@ -42,72 +42,72 @@ function WebcamStream() {
 
   const [filename, setFilename] = useState<string>();
 
-  const uploadVideo = async (blob: Blob) => {
-    const uploadUrl = `${domain}/upload/image`;
+  // const uploadVideo = async (blob: Blob) => {
+  //   const uploadUrl = `${domain}/upload/image`;
 
-    const formData = new FormData();
+  //   const formData = new FormData();
 
-    const file = new File([blob], Date.now().toString() + ".mp4", {
-      type: "video/mp4",
-    });
-    formData.append("image", file);
-    formData.append("type", "input");
+  //   const file = new File([blob], Date.now().toString() + ".mp4", {
+  //     type: "video/mp4",
+  //   });
+  //   formData.append("image", file);
+  //   formData.append("type", "input");
 
-    try {
-      const response = await axios.post(uploadUrl, formData);
+  //   try {
+  //     const response = await axios.post(uploadUrl, formData);
 
-      const { name } = response.data;
-      console.log("Video uploaded successfully:", response.data);
-      await new Promise((res) => setTimeout(res, 1000));
-      downloadVideo(name, blob);
-      await queuePrompt(name);
-    } catch (error) {
-      console.error("Error uploading video:", error);
-    }
-  };
+  //     const { name } = response.data;
+  //     console.log("Video uploaded successfully:", response.data);
+  //     await new Promise((res) => setTimeout(res, 1000));
+  //     downloadVideo(name, blob);
+  //     await queuePrompt(name);
+  //   } catch (error) {
+  //     console.error("Error uploading video:", error);
+  //   }
+  // };
 
-  const queuePrompt = async (filename: string) => {
-    setLoading(true);
-    try {
-      let seed = "";
-      for (let i = 0; i < 15; i++) {
-        seed += Math.floor(Math.random() * 10).toString();
-      }
-      workflow[111].inputs.noise_seed = Number(seed);
-      //
-      workflow[107].inputs.video = `ComfyUI/input/` + filename;
+  // const queuePrompt = async (filename: string) => {
+  //   setLoading(true);
+  //   try {
+  //     let seed = "";
+  //     for (let i = 0; i < 15; i++) {
+  //       seed += Math.floor(Math.random() * 10).toString();
+  //     }
+  //     workflow[111].inputs.noise_seed = Number(seed);
+  //     //
+  //     workflow[107].inputs.video = `ComfyUI/input/` + filename;
 
-      const response = await fetch(`${domain}/prompt`, {
-        method: "POST",
-        body: JSON.stringify({ prompt: workflow }),
-      });
-      if (!response.ok) {
-        throw "Prompting failed";
-      }
-      const { prompt_id } = await response.json();
+  //     const response = await fetch(`${domain}/prompt`, {
+  //       method: "POST",
+  //       body: JSON.stringify({ prompt: workflow }),
+  //     });
+  //     if (!response.ok) {
+  //       throw "Prompting failed";
+  //     }
+  //     const { prompt_id } = await response.json();
 
-      localStorage.setItem("promptId", prompt_id);
-      router.push("/viewVideoBoothVideo"); ///////////////// REDIRECT?
-    } catch (err) {
-      console.error("Error generating video:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     localStorage.setItem("promptId", prompt_id);
+  //     router.push("/viewVideoBoothVideo"); ///////////////// REDIRECT?
+  //   } catch (err) {
+  //     console.error("Error generating video:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const downloadVideo = (name: string, blob: Blob) => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.style.display = "none";
-    a.href = url;
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }, 100);
-  };
+  // const downloadVideo = (name: string, blob: Blob) => {
+  //   const url = URL.createObjectURL(blob);
+  //   const a = document.createElement("a");
+  //   a.style.display = "none";
+  //   a.href = url;
+  //   a.download = name;
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   setTimeout(() => {
+  //     document.body.removeChild(a);
+  //     window.URL.revokeObjectURL(url);
+  //   }, 100);
+  // };
 
   const showRecorder = () => {
     return (
@@ -197,7 +197,7 @@ function WebcamStream() {
           mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
           mediaRecorder.onstop = async () => {
             const recordedBlob = new Blob(chunks, { type: "video/webm" });
-            await uploadVideo(recordedBlob);
+            //await uploadVideo(recordedBlob);
           };
 
           mediaRecorder.start();
